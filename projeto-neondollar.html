@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco Neon Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4B0097 0%, #6B1BA7 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(75, 0, 151, 0.3);
+        }
+
+        .logo {
+            color: #4B0097;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(75, 0, 151, 0.2);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: #4B0097;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 0, 151, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(75, 0, 151, 0.2);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4B0097;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4B0097;
+            box-shadow: 0 0 0 3px rgba(75, 0, 151, 0.1);
+        }
+
+        .btn {
+            background: #4B0097;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #6B1BA7;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 0, 151, 0.4);
+        }
+
+        .btn-secondary {
+            background: #C7F603;
+            color: #4B0097;
+        }
+
+        .btn-secondary:hover {
+            background: #B8E603;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .fab-hidden {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 2000;
+            background: #4B0097;
+            color: #fff;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(75,0,151,0.4);
+            cursor: pointer;
+            border: none;
+            opacity: 0.15;
+            transition: opacity .2s, transform .2s;
+        }
+        .fab-hidden:hover, .fab-hidden:focus {
+            opacity: 1;
+            transform: translateY(-2px);
+            outline: none;
+        }
+        .fab-hidden span {
+            font-size: 1.4rem;
+        }
+
+        /* Ajustes de layout para o modal de Backup */
+        #backupModal .modal-content {
+            overflow: auto;
+        }
+        #backupModal .student-actions {
+            flex-wrap: wrap;
+        }
+        #backupModal .student-actions input[type="number"],
+        #backupModal .student-actions input[type="text"],
+        #backupModal .student-actions input[type="file"],
+        #backupModal .student-actions select {
+            flex: 1 1 140px;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .student-card {
+            background: linear-gradient(135deg, #4B0097, #6B1BA7);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(199, 246, 3, 0.1), transparent);
+            transform: rotate(45deg);
+        }
+
+        .student-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .student-balance {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #C7F603;
+            margin: 10px 0;
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .student-actions .btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .bank-view {
+            background: linear-gradient(135deg, #4B0097, #6B1BA7);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .balance-display {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        .avatar-circle {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #C7F603;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin: 0 0 10px 0;
+            display: none;
+        }
+
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #C7F603;
+            margin: 10px 0;
+        }
+        .balance-amount-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .balance-header {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            justify-content: flex-start;
+        }
+        .balance-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+        .btn-icon {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+        .btn-icon:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-1px);
+        }
+        /* Ajuste específico: trazer a foto mais ao centro na Visão Bancária */
+        #studentPhotoPreview {
+            margin-left: 110px;
+        }
+
+        .extract {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            color: #333;
+        }
+
+        .extract h3 {
+            color: #4B0097;
+            margin-bottom: 20px;
+        }
+
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+
+        .transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-type {
+            font-weight: bold;
+            color: #4B0097;
+        }
+
+        .transaction-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .transaction-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .transaction-amount.positive {
+            color: #28a745;
+        }
+
+        .transaction-amount.negative {
+            color: #dc3545;
+        }
+        .transaction-amount.neutral {
+            color: #6c757d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #4B0097;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(75, 0, 151, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4B0097;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .students-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .student-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">💰 BANCO NEON</div>
+            <div class="subtitle">Sistema de Gestão de Neon Dollars</div>
+        </header>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab(event, 'students')">👥 Alunos</button>
+            <button class="tab-btn" onclick="showTab(event, 'register')">➕ Cadastrar</button>
+            <button class="tab-btn" onclick="showTab(event, 'bank')">🏦 Visão Bancária</button>
+            <button class="tab-btn" onclick="showTab(event, 'invest')">💹 Investimentos</button>
+            <button class="tab-btn" onclick="showTab(event, 'stats')">📊 Estatísticas</button>
+        </nav>
+
+        <div id="students" class="tab-content active">
+            <h2 style="color: #4B0097; margin-bottom: 20px;">Lista de Alunos</h2>
+            <div class="students-grid" id="studentsGrid">
+                <!-- Alunos serão inseridos aqui dinamicamente -->
+            </div>
+        </div>
+
+        <div id="invest" class="tab-content">
+            <h2 style="color: #4B0097; margin-bottom: 20px;">💹 Investimentos</h2>
+            <div class="bank-view">
+                <div class="balance-header">
+                    <img id="investStudentPhoto" class="avatar-circle" alt="Foto do aluno" style="width:110px; height:110px; display:none;" />
+                    <div class="balance-info">
+                        <div style="font-weight:600">Selecione o aluno para investir</div>
+                        <select id="investStudentSelect"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="extract">
+                <h3>Comprar Investimentos</h3>
+                <form id="investForm">
+                    <div class="form-group">
+                        <label for="investType">Tipo:</label>
+                        <select id="investType" required>
+                            <option value="renda_fixa">Renda Fixa (40% a.a.)</option>
+                            <option value="acao_A">Ação - Empresa A</option>
+                            <option value="acao_B">Ação - Empresa B</option>
+                            <option value="acao_C">Ação - Empresa C</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="investAmount">Valor a investir (N$):</label>
+                        <input type="number" id="investAmount" min="0.01" step="0.01" required />
+                    </div>
+                    <button type="submit" class="btn">Comprar</button>
+                </form>
+
+                <div style="margin-top:20px;">
+                    <h3>Carteira do Aluno</h3>
+                    <div id="portfolioView" style="font-size:0.95rem; color:#333;"></div>
+                </div>
+            </div>
+        </div>
+        <div id="register" class="tab-content">
+            <h2 style="color: #4B0097; margin-bottom: 20px;">Cadastrar Novo Aluno</h2>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="studentName">Nome do Aluno:</label>
+                    <input type="text" id="studentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentAge">Idade:</label>
+                    <input type="number" id="studentAge" min="4" max="12" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentPhoto">Foto do Aluno (opcional):</label>
+                    <input type="file" id="studentPhoto" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="initialBalance">Saldo Inicial (Neon Dollars):</label>
+                    <input type="number" id="initialBalance" min="0" step="0.01" value="100">
+                </div>
+                <button type="submit" class="btn">Cadastrar Aluno</button>
+            </form>
+        </div>
+
+        <div id="bank" class="tab-content">
+            <div class="bank-view">
+                <div class="balance-display">
+                    <div class="balance-header">
+                        <img id="studentPhotoPreview" class="avatar-circle" alt="Foto do aluno" />
+                        <div class="balance-info">
+                            <h2>Saldo da Conta</h2>
+                            <div class="balance-amount-row">
+                                <div class="balance-amount" id="selectedStudentBalance">N$ 0,00</div>
+                                <button class="btn-icon" id="toggleBalanceBtn" type="button" onclick="toggleBalanceVisibility()" aria-pressed="false" title="Mostrar/ocultar saldo">👁️</button>
+                            </div>
+                            <div>
+                                <select id="studentSelect" onchange="loadStudentBank()">
+                                    <option value="">Selecione um aluno</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="extract">
+                <h3>📋 Extrato de Transações</h3>
+                <div id="extractList">
+                    <p style="text-align: center; color: #666;">Selecione um aluno para ver o extrato</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="stats" class="tab-content">
+            <h2 style="color: #4B0097; margin-bottom: 20px;">Estatísticas Gerais</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalStudents">0</div>
+                    <div class="stat-label">Alunos Cadastrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalBalance">N$ 0,00</div>
+                    <div class="stat-label">Neon Dollars em Circulação</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgBalance">N$ 0,00</div>
+                    <div class="stat-label">Saldo Médio por Aluno</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão flutuante (escondido) para backup -->
+    <button id="backupFab" class="fab-hidden" title="Backup" onclick="openBackupModal()"><span>💾</span></button>
+
+    <!-- Modal para transações -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle" style="color: #4B0097; margin-bottom: 20px;">Nova Transação</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionType">Tipo de Transação:</label>
+                    <select id="transactionType" required>
+                        <option value="credit">Crédito (+)</option>
+                        <option value="debit">Débito (-)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionAmount">Valor (Neon Dollars):</label>
+                    <input type="number" id="transactionAmount" min="0.01" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDescription">Descrição:</label>
+                    <input type="text" id="transactionDescription" placeholder="Ex: Tarefa realizada, Compra na lojinha..." required>
+                </div>
+                <button type="submit" class="btn">Processar Transação</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para editar cadastro do aluno -->
+    <div id="editStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditStudentModal()">&times;</span>
+            <h2 style="color: #4B0097; margin-bottom: 20px;">Editar Cadastro do Aluno</h2>
+            <form id="editStudentForm">
+                <div class="form-group">
+                    <label for="editStudentName">Nome do Aluno:</label>
+                    <input type="text" id="editStudentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editStudentAge">Idade:</label>
+                    <input type="number" id="editStudentAge" min="4" max="12" required>
+                </div>
+                <div class="form-group">
+                    <label>Foto do Aluno:</label>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img id="editStudentPhotoPreview" class="avatar-circle" alt="Foto do aluno" style="margin:0; display:none; width:64px; height:64px; border-width:2px;" />
+                        <div style="display:flex; gap:8px;">
+                            <button type="button" class="btn btn-secondary" onclick="triggerEditPhoto()">Alterar foto</button>
+                            <button type="button" class="btn btn-danger" onclick="removeEditPhoto()">Remover foto</button>
+                        </div>
+                    </div>
+                    <input type="file" id="editStudentPhotoInput" accept="image/*" style="display:none;" />
+                </div>
+                <div class="student-actions" style="margin-top: 10px;">
+                    <button type="submit" class="btn">Salvar</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteStudentFromEdit()">Excluir Aluno</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Backup (Exportar/Importar) -->
+    <div id="backupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBackupModal()">&times;</span>
+            <h2 style="color: #4B0097; margin-bottom: 20px;">Backup de Dados</h2>
+            <div style="display: grid; gap: 16px;">
+                <div>
+                    <h3 style="color:#4B0097; margin-bottom:10px; font-size:1.1rem;">Dados (sem fotos)</h3>
+                    <div class="student-actions" style="margin-top: 0;">
+                        <button class="btn btn-secondary" onclick="exportData()">⬇️ Exportar JSON</button>
+                        <button class="btn" onclick="triggerImport()">⬆️ Importar JSON</button>
+                        <input type="file" id="backupFileInput" accept="application/json,.json" style="display: none;" />
+                    </div>
+                    <p style="margin-top: 6px; color:#666; font-size:0.9rem;">Exporta/Importa somente alunos, saldos e extratos. Não inclui fotos.</p>
+                </div>
+                <hr style="border:none; border-top:1px solid #eee;" />
+                <div>
+                    <h3 style="color:#4B0097; margin-bottom:10px; font-size:1.1rem;">Fotos dos alunos</h3>
+                    <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:0.95rem; color:#333;">
+                        <input type="checkbox" id="includePhotosChk" onchange="togglePhotosControls()" /> Incluir fotos no backup
+                    </label>
+                    <div class="student-actions" style="margin-top: 0;">
+                        <button class="btn btn-secondary" id="exportPhotosBtn" onclick="exportPhotos()" disabled>⬇️ Exportar Fotos (BASE64)</button>
+                        <button class="btn" id="importPhotosBtn" onclick="triggerImportPhotos()" disabled>⬆️ Importar Fotos</button>
+                        <input type="file" id="photosFileInput" accept="application/json,.json" style="display: none;" />
+                    </div>
+                    <p style="margin-top: 6px; color:#666; font-size:0.9rem;">Exporta/Importa um arquivo separado com as imagens (base64). Não altera saldos ou extratos.</p>
+                </div>
+                <hr style="border:none; border-top:1px solid #eee;" />
+                <div>
+                    <h3 style="color:#4B0097; margin-bottom:10px; font-size:1.1rem;">Preços das Ações</h3>
+                    <div class="student-actions" style="margin-top: 0; gap:8px;">
+                        <input type="number" id="priceA" step="0.01" min="0.01" placeholder="Preço A (N$)" style="flex:1 1 120px; padding:10px; border:2px solid #e0e0e0; border-radius:10px;" />
+                        <input type="number" id="priceB" step="0.01" min="0.01" placeholder="Preço B (N$)" style="flex:1 1 120px; padding:10px; border:2px solid #e0e0e0; border-radius:10px;" />
+                        <input type="number" id="priceC" step="0.01" min="0.01" placeholder="Preço C (N$)" style="flex:1 1 120px; padding:10px; border:2px solid #e0e0e0; border-radius:10px;" />
+                    </div>
+                    <div class="student-actions" style="margin-top: 10px;">
+                        <button class="btn" onclick="applyStockPrices()">Aplicar Preços</button>
+                    </div>
+                    <p style="margin-top: 6px; color:#666; font-size:0.9rem;">Altera os preços atuais das ações A, B e C (visível na aba Investimentos).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let students = [];
+        let currentStudentId = null;
+        let isBalanceHidden = false;
+
+        // Carregar dados salvos ao iniciar
+        window.onload = function() {
+            loadData();
+            renderStudents();
+            updateStats();
+            updateStudentSelect();
+        };
+        // Também atualizar selects da aba investimentos ao iniciar
+        window.addEventListener('load', updateInvestStudentSelect);
+
+        function showTab(evt, tabName) {
+            // Esconder todas as abas
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remover classe active de todos os botões
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Mostrar aba selecionada
+            document.getElementById(tabName).classList.add('active');
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            }
+        }
+
+        function loadData() {
+            const savedData = localStorage.getItem('neonBankData');
+            if (savedData) {
+                students = JSON.parse(savedData);
+            }
+            // Carregar preços das ações, se existirem
+            try {
+                const savedPrices = localStorage.getItem('neonStockPrices');
+                if (savedPrices) {
+                    const parsed = JSON.parse(savedPrices);
+                    if (parsed && typeof parsed === 'object') {
+                        if (typeof parsed.acao_A === 'number') stockPrices.acao_A = parsed.acao_A;
+                        if (typeof parsed.acao_B === 'number') stockPrices.acao_B = parsed.acao_B;
+                        if (typeof parsed.acao_C === 'number') stockPrices.acao_C = parsed.acao_C;
+                    }
+                }
+            } catch (_) { /* ignore parse errors */ }
+        }
+
+        function saveData() {
+            localStorage.setItem('neonBankData', JSON.stringify(students));
+        }
+
+        // Preços de ações (configuráveis no backup modal)
+        let stockPrices = {
+            acao_A: 10,
+            acao_B: 20,
+            acao_C: 30
+        };
+
+        document.getElementById('studentForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('studentName').value;
+            const age = parseInt(document.getElementById('studentAge').value);
+            const balance = parseFloat(document.getElementById('initialBalance').value);
+            const photoInput = document.getElementById('studentPhoto');
+            const photoFile = photoInput && photoInput.files ? photoInput.files[0] : null;
+            
+            const buildAndSaveStudent = (photoDataUrl) => {
+                const newStudent = {
+                    id: Date.now(),
+                    name: name,
+                    age: age,
+                    balance: balance,
+                    photoDataUrl: photoDataUrl || null,
+                    transactions: [{
+                        id: Date.now(),
+                        type: 'credit',
+                        amount: balance,
+                        description: 'Saldo inicial',
+                        date: new Date().toLocaleString('pt-BR')
+                    }]
+                };
+                students.push(newStudent);
+                saveData();
+                renderStudents();
+                updateStats();
+                updateStudentSelect();
+                // Limpar formulário
+                document.getElementById('studentForm').reset();
+                document.getElementById('initialBalance').value = 100;
+                alert('Aluno cadastrado com sucesso!');
+            };
+
+            if (photoFile) {
+                const reader = new FileReader();
+                reader.onload = function(loadEvt) {
+                    buildAndSaveStudent(loadEvt.target.result);
+                };
+                reader.readAsDataURL(photoFile);
+            } else {
+                buildAndSaveStudent(null);
+            }
+        };
+
+        function renderStudents() {
+            const grid = document.getElementById('studentsGrid');
+            grid.innerHTML = '';
+            
+            students.forEach(student => {
+                const card = document.createElement('div');
+                card.className = 'student-card';
+                card.innerHTML = `
+                    <div class="student-name">${student.name}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">${student.age} anos</div>
+                    <div class="student-balance">N$ ${student.balance.toFixed(2).replace('.', ',')}</div>
+                    <div class="student-actions">
+                        <button class="btn btn-secondary" onclick="openTransactionModal(${student.id})">💰 Transação</button>
+                        <button class="btn" onclick="openEditStudentModal(${student.id})">✏️ Editar</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function updateInvestStudentSelect() {
+            const select = document.getElementById('investStudentSelect');
+            if (!select) return;
+            const current = select.value;
+            select.innerHTML = '<option value="">Selecione um aluno</option>';
+            students.forEach(s => {
+                const o = document.createElement('option');
+                o.value = s.id;
+                o.textContent = s.name;
+                select.appendChild(o);
+            });
+            select.value = current;
+            // Atualiza foto
+            const photo = document.getElementById('investStudentPhoto');
+            const selected = students.find(s => String(s.id) === String(select.value));
+            if (photo && selected && selected.photoDataUrl) {
+                photo.src = selected.photoDataUrl;
+                photo.style.display = 'block';
+            } else if (photo) {
+                photo.style.display = 'none';
+            }
+            renderPortfolio();
+        }
+
+        document.addEventListener('change', function(e){
+            if (e.target && e.target.id === 'investStudentSelect') {
+                const id = e.target.value;
+                const photo = document.getElementById('investStudentPhoto');
+                const s = students.find(st => String(st.id) === String(id));
+                if (photo && s && s.photoDataUrl) {
+                    photo.src = s.photoDataUrl;
+                    photo.style.display = 'block';
+                } else if (photo) {
+                    photo.style.display = 'none';
+                }
+                renderPortfolio();
+            }
+        });
+
+        document.addEventListener('submit', function(e){
+            if (e.target && e.target.id === 'investForm') {
+                e.preventDefault();
+                const select = document.getElementById('investStudentSelect');
+                const studentId = select.value;
+                if (!studentId) { alert('Selecione um aluno.'); return; }
+                const student = students.find(s => String(s.id) === String(studentId));
+                if (!student) return;
+                const type = document.getElementById('investType').value;
+                const amount = parseFloat(document.getElementById('investAmount').value);
+                if (!amount || amount <= 0) { alert('Informe um valor válido.'); return; }
+                if (student.balance < amount) { alert('Saldo insuficiente.'); return; }
+
+                if (type === 'renda_fixa') {
+                    const rf = student.fixedIncome || { invested: 0, rateAnnual: 0.40, startAt: new Date().toISOString() };
+                    rf.invested += amount;
+                    student.fixedIncome = rf;
+                } else {
+                    const price = stockPrices[type];
+                    if (!price || price <= 0) { alert('Preço da ação inválido.'); return; }
+                    const qty = amount / price;
+                    student.stocks = student.stocks || { acao_A: 0, acao_B: 0, acao_C: 0 };
+                    student.stocks[type] += qty;
+                }
+
+                // Debita do saldo e registra transação
+                student.balance -= amount;
+                student.transactions.push({
+                    id: Date.now(),
+                    type: 'debit',
+                    amount: amount,
+                    description: `Investimento em ${type === 'renda_fixa' ? 'Renda Fixa' : type.replace('acao_', 'Ação - Empresa ').toUpperCase()}`,
+                    date: new Date().toLocaleString('pt-BR')
+                });
+                saveData();
+                renderStudents();
+                updateStats();
+                updateStudentSelect();
+                updateInvestStudentSelect();
+                if (document.getElementById('studentSelect').value == studentId) {
+                    loadStudentBank();
+                }
+                (document.getElementById('investForm')).reset();
+                alert('Investimento realizado com sucesso!');
+            }
+        });
+
+        function renderPortfolio() {
+            const container = document.getElementById('portfolioView');
+            if (!container) return;
+            const select = document.getElementById('investStudentSelect');
+            const student = students.find(s => String(s.id) === String(select.value));
+            if (!student) { container.innerHTML = '<em>Nenhum aluno selecionado.</em>'; return; }
+            const rf = student.fixedIncome || { invested: 0, rateAnnual: 0.40, startAt: null };
+            const st = student.stocks || { acao_A: 0, acao_B: 0, acao_C: 0 };
+            const stocksValue = (st.acao_A * stockPrices.acao_A) + (st.acao_B * stockPrices.acao_B) + (st.acao_C * stockPrices.acao_C);
+            container.innerHTML = `
+                <div>Saldo disponível: <strong>N$ ${student.balance.toFixed(2).replace('.', ',')}</strong></div>
+                <div style="margin-top:10px;">
+                    <div style="font-weight:600;">Renda Fixa</div>
+                    <div>Investido: N$ ${rf.invested.toFixed(2).replace('.', ',')} (40% a.a.)</div>
+                </div>
+                <div style="margin-top:10px;">
+                    <div style="font-weight:600;">Ações</div>
+                    <div>A: ${st.acao_A.toFixed(4)} (N$ ${stockPrices.acao_A}) | B: ${st.acao_B.toFixed(4)} (N$ ${stockPrices.acao_B}) | C: ${st.acao_C.toFixed(4)} (N$ ${stockPrices.acao_C})</div>
+                    <div>Valor de mercado: <strong>N$ ${stocksValue.toFixed(2).replace('.', ',')}</strong></div>
+                </div>
+            `;
+        }
+
+        function deleteStudent(studentId) {
+            if (confirm('Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita.')) {
+                students = students.filter(s => s.id !== studentId);
+                saveData();
+                renderStudents();
+                updateStats();
+                updateStudentSelect();
+                const select = document.getElementById('studentSelect');
+                if (select && String(select.value) === String(studentId)) {
+                    select.value = '';
+                    loadStudentBank();
+                }
+            }
+        }
+
+        let currentEditStudentId = null;
+        let currentEditPhotoDataUrl = null;
+        function openEditStudentModal(studentId) {
+            currentEditStudentId = studentId;
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            document.getElementById('editStudentName').value = student.name;
+            document.getElementById('editStudentAge').value = student.age;
+            currentEditPhotoDataUrl = student.photoDataUrl || null;
+            const prev = document.getElementById('editStudentPhotoPreview');
+            if (currentEditPhotoDataUrl) {
+                prev.src = currentEditPhotoDataUrl;
+                prev.style.display = 'block';
+            } else {
+                prev.style.display = 'none';
+            }
+            document.getElementById('editStudentModal').style.display = 'block';
+        }
+        function closeEditStudentModal() {
+            document.getElementById('editStudentModal').style.display = 'none';
+            const input = document.getElementById('editStudentPhotoInput');
+            if (input) input.value = '';
+            currentEditStudentId = null;
+            currentEditPhotoDataUrl = null;
+        }
+        function triggerEditPhoto() {
+            const input = document.getElementById('editStudentPhotoInput');
+            if (input) input.click();
+        }
+        document.getElementById('editStudentPhotoInput').addEventListener('change', function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                currentEditPhotoDataUrl = ev.target.result;
+                const prev = document.getElementById('editStudentPhotoPreview');
+                prev.src = currentEditPhotoDataUrl;
+                prev.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        });
+        function removeEditPhoto() {
+            currentEditPhotoDataUrl = null;
+            const prev = document.getElementById('editStudentPhotoPreview');
+            prev.style.display = 'none';
+        }
+        document.getElementById('editStudentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('editStudentName').value.trim();
+            const age = parseInt(document.getElementById('editStudentAge').value, 10);
+            if (!name) { alert('Nome é obrigatório.'); return; }
+            if (Number.isNaN(age) || age < 4 || age > 12) { alert('Idade inválida.'); return; }
+            const idx = students.findIndex(s => s.id === currentEditStudentId);
+            if (idx === -1) return;
+            students[idx].name = name;
+            students[idx].age = age;
+            students[idx].photoDataUrl = currentEditPhotoDataUrl;
+            saveData();
+            renderStudents();
+            updateStats();
+            updateStudentSelect();
+            const select = document.getElementById('studentSelect');
+            if (select && String(select.value) === String(currentEditStudentId)) {
+                loadStudentBank();
+            }
+            closeEditStudentModal();
+            alert('Cadastro atualizado com sucesso!');
+        });
+        function deleteStudentFromEdit() {
+            if (currentEditStudentId == null) return;
+            if (confirm('Tem certeza que deseja excluir este aluno? Esta ação não pode ser desfeita.')) {
+                const id = currentEditStudentId;
+                closeEditStudentModal();
+                deleteStudent(id);
+            }
+        }
+
+        function openTransactionModal(studentId) {
+            currentStudentId = studentId;
+            const student = students.find(s => s.id === studentId);
+            document.getElementById('modalTitle').textContent = `Nova Transação - ${student.name}`;
+            document.getElementById('transactionModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('transactionModal').style.display = 'none';
+            document.getElementById('transactionForm').reset();
+        }
+
+        document.getElementById('transactionForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('transactionType').value;
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const description = document.getElementById('transactionDescription').value;
+            
+            const student = students.find(s => s.id === currentStudentId);
+            
+            if (type === 'debit' && student.balance < amount) {
+                alert('Saldo insuficiente para esta transação!');
+                return;
+            }
+            
+            const transaction = {
+                id: Date.now(),
+                type: type,
+                amount: amount,
+                description: description,
+                date: new Date().toLocaleString('pt-BR')
+            };
+            
+            student.transactions.push(transaction);
+            
+            if (type === 'credit') {
+                student.balance += amount;
+            } else {
+                student.balance -= amount;
+            }
+            
+            saveData();
+            renderStudents();
+            updateStats();
+            closeModal();
+            
+            // Se o aluno está selecionado na visão bancária, atualizar
+            if (document.getElementById('studentSelect').value == currentStudentId) {
+                loadStudentBank();
+            }
+        };
+
+        function updateStudentSelect() {
+            const select = document.getElementById('studentSelect');
+            const currentValue = select.value;
+            
+            select.innerHTML = '<option value="">Selecione um aluno</option>';
+            
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = student.name;
+                select.appendChild(option);
+            });
+            
+            select.value = currentValue;
+        }
+
+        function loadStudentBank() {
+            const studentId = document.getElementById('studentSelect').value;
+            
+            if (!studentId) {
+                document.getElementById('selectedStudentBalance').textContent = 'N$ 0,00';
+                const photoEl = document.getElementById('studentPhotoPreview');
+                if (photoEl) { photoEl.style.display = 'none'; }
+                document.getElementById('extractList').innerHTML = '<p style="text-align: center; color: #666;">Selecione um aluno para ver o extrato</p>';
+                return;
+            }
+            
+            const student = students.find(s => s.id == studentId);
+            const photoEl = document.getElementById('studentPhotoPreview');
+            if (photoEl) {
+                if (student.photoDataUrl) {
+                    photoEl.src = student.photoDataUrl;
+                    photoEl.style.display = 'block';
+                } else {
+                    photoEl.style.display = 'none';
+                }
+            }
+            
+            const balanceEl = document.getElementById('selectedStudentBalance');
+            if (isBalanceHidden) {
+                balanceEl.textContent = 'N$ ••••••';
+            } else {
+                balanceEl.textContent = `N$ ${student.balance.toFixed(2).replace('.', ',')}`;
+            }
+            
+            const extractList = document.getElementById('extractList');
+            extractList.innerHTML = '';
+            
+            // Ordenar transações por data (mais recente primeiro)
+            const sortedTransactions = [...student.transactions].reverse();
+            
+            sortedTransactions.forEach(transaction => {
+                const transactionDiv = document.createElement('div');
+                transactionDiv.className = 'transaction';
+                
+                const isPositive = transaction.type === 'credit';
+                const amountClass = isBalanceHidden ? 'neutral' : (isPositive ? 'positive' : 'negative');
+                const sign = isBalanceHidden ? '' : (isPositive ? '+' : '-');
+                const maskedDesc = '••••••';
+                
+                transactionDiv.innerHTML = `
+                    <div class="transaction-info">
+                        <div class="transaction-type">${isBalanceHidden ? maskedDesc : transaction.description}</div>
+                        <div class="transaction-date">${transaction.date}</div>
+                    </div>
+                    <div class="transaction-amount ${amountClass}">
+                        ${isBalanceHidden ? 'N$ ••••••' : `${sign}N$ ${transaction.amount.toFixed(2).replace('.', ',')}`}
+                    </div>
+                `;
+                
+                extractList.appendChild(transactionDiv);
+            });
+        }
+
+        function toggleBalanceVisibility() {
+            isBalanceHidden = !isBalanceHidden;
+            const btn = document.getElementById('toggleBalanceBtn');
+            if (btn) {
+                btn.setAttribute('aria-pressed', isBalanceHidden ? 'true' : 'false');
+                btn.textContent = isBalanceHidden ? '🙈' : '👁️';
+            }
+
+            const studentId = document.getElementById('studentSelect').value;
+            const balanceEl = document.getElementById('selectedStudentBalance');
+            if (!studentId) {
+                balanceEl.textContent = 'N$ 0,00';
+                return;
+            }
+            const student = students.find(s => s.id == studentId);
+            if (!student) return;
+            if (isBalanceHidden) {
+                balanceEl.textContent = 'N$ ••••••';
+            } else {
+                balanceEl.textContent = `N$ ${student.balance.toFixed(2).replace('.', ',')}`;
+            }
+            // Re-renderizar extrato para aplicar máscara/cores
+            loadStudentBank();
+        }
+
+        function openBackupModal() {
+            document.getElementById('backupModal').style.display = 'block';
+        }
+        function closeBackupModal() {
+            document.getElementById('backupModal').style.display = 'none';
+            const input = document.getElementById('backupFileInput');
+            if (input) input.value = '';
+        }
+        function exportData() {
+            try {
+                const dataToExport = students.map(({ photoDataUrl, ...rest }) => rest);
+                const exportObj = {
+                    exportedAt: new Date().toISOString(),
+                    students: dataToExport
+                };
+                const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `neonbank_backup_${new Date().toISOString().replace(/[:]/g, '-')}.json`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                    a.remove();
+                }, 0);
+            } catch (err) {
+                alert('Falha ao exportar: ' + err.message);
+            }
+        }
+        function triggerImport() {
+            const input = document.getElementById('backupFileInput');
+            if (input) input.click();
+        }
+        document.getElementById('backupFileInput').addEventListener('change', function (e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function () {
+                try {
+                    const parsed = JSON.parse(reader.result);
+                    const importedStudents = Array.isArray(parsed) ? parsed : parsed.students;
+                    if (!Array.isArray(importedStudents)) throw new Error('JSON inválido: campo "students" ausente.');
+                    const sanitized = importedStudents.map(s => {
+                        const { photoDataUrl, ...rest } = s;
+                        return {
+                            ...rest,
+                            photoDataUrl: null,
+                            transactions: Array.isArray(rest.transactions) ? rest.transactions : []
+                        };
+                    });
+                    students = sanitized;
+                    saveData();
+                    renderStudents();
+                    updateStats();
+                    updateStudentSelect();
+                    closeBackupModal();
+                    alert('Dados importados com sucesso!');
+                } catch (err) {
+                    alert('Falha ao importar JSON: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function togglePhotosControls() {
+            const enabled = document.getElementById('includePhotosChk').checked;
+            document.getElementById('exportPhotosBtn').disabled = !enabled;
+            document.getElementById('importPhotosBtn').disabled = !enabled;
+        }
+        function exportPhotos() {
+            try {
+                const photos = students
+                    .filter(s => typeof s.photoDataUrl === 'string' && s.photoDataUrl.length > 0)
+                    .map(s => ({ id: s.id, name: s.name, photoDataUrl: s.photoDataUrl }));
+                const exportObj = {
+                    exportedAt: new Date().toISOString(),
+                    photos
+                };
+                const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `neonbank_photos_${new Date().toISOString().replace(/[:]/g, '-')}.json`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                    a.remove();
+                }, 0);
+            } catch (err) {
+                alert('Falha ao exportar fotos: ' + err.message);
+            }
+        }
+        function triggerImportPhotos() {
+            const input = document.getElementById('photosFileInput');
+            if (input) input.click();
+        }
+        document.getElementById('photosFileInput').addEventListener('change', function (e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function () {
+                try {
+                    const parsed = JSON.parse(reader.result);
+                    const photosArr = Array.isArray(parsed) ? parsed : (parsed.photos || []);
+                    if (!Array.isArray(photosArr)) throw new Error('JSON de fotos inválido.');
+                    const idToPhoto = new Map(photosArr.map(p => [String(p.id), p.photoDataUrl]));
+                    students = students.map(s => {
+                        const key = String(s.id);
+                        if (idToPhoto.has(key)) {
+                            return { ...s, photoDataUrl: idToPhoto.get(key) };
+                        }
+                        return s;
+                    });
+                    saveData();
+                    // Atualizar UI atual
+                    renderStudents();
+                    updateStats();
+                    updateStudentSelect();
+                    // Se um aluno está selecionado, atualizar foto
+                    const selectedId = document.getElementById('studentSelect').value;
+                    if (selectedId) {
+                        loadStudentBank();
+                    }
+                    closeBackupModal();
+                    alert('Fotos importadas com sucesso!');
+                } catch (err) {
+                    alert('Falha ao importar fotos: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        function applyStockPrices() {
+            const a = parseFloat(document.getElementById('priceA').value);
+            const b = parseFloat(document.getElementById('priceB').value);
+            const c = parseFloat(document.getElementById('priceC').value);
+            if (a && a > 0) stockPrices.acao_A = a;
+            if (b && b > 0) stockPrices.acao_B = b;
+            if (c && c > 0) stockPrices.acao_C = c;
+            renderPortfolio();
+            alert('Preços atualizados!');
+            saveStockPrices();
+        }
+
+        function saveStockPrices() {
+            try {
+                localStorage.setItem('neonStockPrices', JSON.stringify(stockPrices));
+            } catch (_) { /* ignore */ }
+        }
+
+        function updateStats() {
+            const totalStudentsEl = document.getElementById('totalStudents');
+            const totalBalanceEl = document.getElementById('totalBalance');
+            const avgBalanceEl = document.getElementById('avgBalance');
+            
+            const totalStudents = students.length;
+            const totalBalance = students.reduce((sum, student) => sum + student.balance, 0);
+            const avgBalance = totalStudents > 0 ? totalBalance / totalStudents : 0;
+            
+            totalStudentsEl.textContent = totalStudents;
+            totalBalanceEl.textContent = `N$ ${totalBalance.toFixed(2).replace('.', ',')}`;
+            avgBalanceEl.textContent = `N$ ${avgBalance.toFixed(2).replace('.', ',')}`;
+        }
+
+        // Fechar modal quando clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('transactionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+            const backupModal = document.getElementById('backupModal');
+            if (event.target === backupModal) {
+                closeBackupModal();
+            }
+            const editModal = document.getElementById('editStudentModal');
+            if (event.target === editModal) {
+                closeEditStudentModal();
+            }
+        };
+    </script>
+</body>
+</html>
